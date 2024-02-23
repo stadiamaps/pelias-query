@@ -76,10 +76,10 @@ function addSecPostCode(vs, o) {
   }
 }
 
-function addSecNeighbourhood(vs, o) {
+function addSecNeighbourhood(vs, o, prop) {
   // add neighbourhood if specified
   if (vs.isset('input:neighbourhood')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:neighbourhood').toString(),
       [
         'parent.neighbourhood',
@@ -89,10 +89,10 @@ function addSecNeighbourhood(vs, o) {
   }
 }
 
-function addSecBorough(vs, o) {
+function addSecBorough(vs, o, prop) {
   // add borough if specified
   if (vs.isset('input:borough')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:borough').toString(),
       [
         'parent.borough',
@@ -102,10 +102,10 @@ function addSecBorough(vs, o) {
   }
 }
 
-function addSecLocality(vs, o) {
+function addSecLocality(vs, o, prop) {
   // add locality if specified
   if (vs.isset('input:locality')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:locality').toString(),
       [
         'parent.locality',
@@ -117,10 +117,10 @@ function addSecLocality(vs, o) {
   }
 }
 
-function addSecCounty(vs, o) {
+function addSecCounty(vs, o, prop) {
   // add county if specified
   if (vs.isset('input:county')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:county').toString(),
       [
         'parent.county',
@@ -132,10 +132,10 @@ function addSecCounty(vs, o) {
   }
 }
 
-function addSecRegion(vs, o) {
+function addSecRegion(vs, o, prop) {
   // add region if specified
   if (vs.isset('input:region')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:region').toString(),
       [
         'parent.region',
@@ -147,10 +147,10 @@ function addSecRegion(vs, o) {
   }
 }
 
-function addSecCountry(vs, o) {
+function addSecCountry(vs, o, prop) {
   // add country if specified
   if (vs.isset('input:country')) {
-    o.bool.must.push(addSecondary(
+    o.bool[prop || 'must'].push(addSecondary(
       vs.var('input:country').toString(),
       [
         'parent.country',
@@ -503,16 +503,20 @@ function addPostCode(vs) {
     vs.var('input:postcode').toString(),
     'postalcode',
     [
-      'parent.postalcode'
+      'address_parts.zip'
     ],
     false
   );
 
+  // Postal code matches from user input are going to be quite noisy at some layers.
+  o.bool.should = [];
+
+
   // same position in hierarchy as borough according to WOF
   // https://github.com/whosonfirst/whosonfirst-placetypes#here-is-a-pretty-picture
-  addSecLocality(vs, o);
-  addSecCounty(vs, o);
-  addSecRegion(vs, o);
+  addSecLocality(vs, o, 'should');
+  addSecCounty(vs, o, 'should');
+  addSecRegion(vs, o, 'should');
   addSecCountry(vs, o);
 
   return o;

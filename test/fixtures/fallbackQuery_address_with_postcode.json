@@ -49,10 +49,11 @@
                     "multi_match": {
                       "query": "postcode value",
                       "type": "phrase",
-                      "fields": ["parent.postalcode"]
+                      "fields": ["address_parts.zip"]
                     }
                   }
                 ],
+                "should": [],
                 "filter": {
                   "term": {
                     "layer": "postalcode"
